@@ -1,0 +1,232 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>kissy-mobile</title>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="format-detection" content="telephone=no" />
+<meta content="false" name="twcClient" id="twcClient" />
+<!--<script src="http://a.tbcdn.cn/s/kissy/1.3.0/seed-min.js" data-config='{combine:true}'></script>-->
+<script src="http://a.tbcdn.cn/s/kissy/1.3.0/seed.js?ks-debug"></script>
+</head>
+<body>
+        <script type="text/template" id="compare_comment_list_template">
+            <ul></ul>
+            <div class="pagination">
+                <a class="prev<%if(pageIndex==1){%> disabled<%}%>">上一页<b class="caret"></b></a>
+                <div class="page-state">
+                    <div class="page-counter"><span><%=pageIndex%>/<%=pageTotal%></span><b class="arrow arrow-down"></b></div>
+                    <select class="page-select">
+                        <% var i = 1;while(pageTotal != (i - 1)) {%>
+                            <option value="<%=i%>"<%if(pageIndex==i){%> selected<%}%>>第<%= i %>页</option>
+                        <% i++; };   %>
+                    </select>
+                </div>
+                <a class="next<%if(pageIndex==pageTotal){%> disabled<%}%>">下一页<b class="caret"></b></a>
+            </div>
+        </script>
+        <script type="text/template" id="compare_similar_list_template">
+            <a href="<%=url%>">
+                <div class="pic"><img src="http://img03.taobaocdn.com/tps/<%=pictUrl%>_180x180.jpg"></div><div class="desc">
+                    <strong><%=title%></strong>
+                    <div class="price">参考价<em>￥<%=price%></em></div>
+                    <div class="merchant"><%=sellerCount %>个商家</div>
+                    <div class="tags"><%=property%></div>
+                </div>
+            </a>
+        </script>
+        
+
+<script>
+    var S = KISSY;
+        S.config({
+            packages:[
+                {
+                    name:"mobile",
+                    path: "../../",
+                    charset:"utf-8",
+                    ignorePackageNameInUri:true
+                }
+            ]
+        });
+
+    S.use('mobile/backbone-lite/backbone.js', function (S, Backbone) {
+        console.log(Backbone);
+        var _ = Backbone._,
+            $ = Backbone.$;
+        
+        var a = Backbone.View.extend({
+
+            template: Backbone._.template("<div><%=author%></div>"),
+            initialize: function(opts) {
+                console.log("init");
+                this.model.on("change",this.render,this);
+            },
+            render: function() {
+                this.$el.html(this.template(this.model.toJSON()));
+                return this;
+            }
+            
+        })
+
+
+        var cModel = Backbone.Model.extend({
+                url : "http://api.m.etao.com/api/search.do?src=h5&nid=675046841906987035",
+                parse: function(json){
+                    return json;
+                }
+            })
+
+        var b = new a({
+            model : new cModel
+        });
+
+
+        
+        console.log(b);
+        console.log(b.$el);
+
+        S.one(".content").append(b.$el);
+
+        b.model.fetch({
+            dataType : "jsonp"
+        });
+
+        var pagerView = Backbone.View.extend({
+            template: _.template($("#compare_comment_list_template").html()),
+            initialize: function(opts) {
+                this.model.view = this;
+                this.el.view = this;
+                this.url = opts.url;
+                this.hash = opts.hash;
+                this.liView = opts.liView;
+                //this.model.on("change",this.render,this);
+                this.render();
+                this.model.on("change", this.render, this)
+                this.collection || console.error("参数中没有Collection");
+                this.collection.on("reset", this.reset, this);
+                //this.addAll();
+                this.$el.one("select").on("change",this.selectChange);
+            },
+            events: {
+                "itap .prev": "prev",
+                "itap .next": "next",
+                "change select": "selectChange"
+            },
+            render: function() {
+                if(!this.model.get("isEmpty")){
+                    this.$el.html(this.template(this.model.toJSON()));
+                }else{
+                    this.$el.html("");
+                }
+                return this;
+            },
+            addOne: function(li) {
+                var view = new this.liView({
+                    model: li
+                });
+                this.$el.one("ul").append(view.render().el);
+            },
+            reset: function() {
+                var that = this;
+                this.$el.one("ul").html("");
+                //this.collection.length == 0 ? this.$el.html("暂无记录") : 
+                this.collection.each(function(m) {
+                    that.addOne.call(that, m);
+                });
+            },
+            prev: function() {
+                var _pageIndex = this.model.get("pageIndex");
+                if (_pageIndex != 1) {
+                    this.index(_pageIndex - 1);
+                    this.router && this.router.navigate(this.hash + (_pageIndex - 1));
+                }
+            },
+            next: function() {
+                var _pageIndex = this.model.get("pageIndex");
+                if (_pageIndex != this.model.get("pageTotal")) {
+                    this.index(_pageIndex + 1);
+                    this.router && this.router.navigate(this.hash + (_pageIndex + 1));
+                }
+
+            },
+            index: function(p) {
+                if(p<1) return;
+                _.extend(this.param.data,{ s : (p - 1) * this.model.get("perPage") });
+                this.model.set("pageIndex", p);
+                this.collection.fetch(this.param);
+            },
+            selectChange: function(e) {
+                var _pageIndex = parseInt(e.target.value);
+                this.index(_pageIndex);
+                this.router && this.router.navigate(this.hash + _pageIndex);
+            }
+        });
+        
+
+        var similarLiView = Backbone.View.extend({
+            tagName: "li",
+            template: _.template($("#compare_similar_list_template").html()),
+            initialize: function() {
+                this.model.view = this;
+                this.el.view = this;
+                this.model.on("change", this.render, this);
+            },
+            render: function() {
+                this.$el.html(this.template(this.model.toJSON()));
+                return this;
+            }
+        });
+
+        var similarPagerModel = new Backbone.Model({
+                pageIndex: 1,
+                perPage: 5,
+                pageTotal: 10
+        });
+        var similarColletion = Backbone.Collection.extend({
+            url: "http://api.m.etao.com/api/same.do?src=h5&sid=DABB2072E2158432B77D652D45BE95A2&q=q&epid=8405088&s=0",
+            model: Backbone.Model.extend({
+                urlRoot: "./",
+                parse : function(json){
+                    json.url = "";
+                    return json;
+                }
+            }),
+            parse: function(json) {
+                json = json.data;
+
+                if (json.resultCode == "0" && json.resultList.length != 0) {
+                        var _total = parseInt(json.totalCount) > 500 ? 500 : parseInt(json.totalCount);
+                        similarPagerModel.set({ pageTotal: Math.ceil(_total / similarPagerModel.get("perPage")) });
+                        return json.resultList;
+                }else{
+                        similarPagerModel.set({ isEmpty : true });
+                };
+            }
+        })
+        
+
+        var similarApp = new pagerView({
+            tagName: "div",
+            id: "compare_similar_list",
+            model: similarPagerModel,
+            collection: new similarColletion,
+            //hash: "compare/similar/",
+            liView: similarLiView
+        });
+        
+        S.one(".content").append(similarApp.$el);
+
+        similarApp.param = { dataType : "jsonp" , s : 0 , data: {}, reset: true};
+        similarApp.index(1);
+        
+        
+    })
+</script>
+
+<div class="content"></div>
+</body>
+</html>
+
