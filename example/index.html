@@ -108,11 +108,13 @@
                 this.collection || console.error("参数中没有Collection");
                 this.collection.on("reset", this.reset, this);
                 //this.addAll();
-                this.$el.one("select").on("change",this.selectChange);
+                //this.$el.delegate("change", "select", this.selectChange,this);
+                //this.$el.delegate("click", ".prev",this.prev ,this);
+                //this.$el.delegate("click", ".next",this.next ,this);
             },
             events: {
-                "itap .prev": "prev",
-                "itap .next": "next",
+                "click .prev": "prev",
+                "click .next": "next",
                 "change select": "selectChange"
             },
             render: function() {

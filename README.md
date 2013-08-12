@@ -21,6 +21,9 @@ backbone-lite
     * isEqual
     * has
     * extend
+    * template
+    * bind
+    * mixin
 
 * 重写Backbone.ajax 采用kissy的IO
 * 选择器的方法用one替换find。

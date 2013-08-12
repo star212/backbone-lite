@@ -374,8 +374,31 @@ KISSY.add(function (S, Node,IO) {
     return template;
   };
 
+
+  // Reusable constructor function for prototype setting.
+  var ctor = function(){};
+
+  // Create a function bound to a given object (assigning `this`, and arguments,
+  // optionally). Delegates to **ECMAScript 5**'s native `Function.bind` if
+  // available.
+  var nativeBind = Function.prototype.bind;
+  _.bind = function(func, context) {
+    var args, bound;
+    if (nativeBind && func.bind === nativeBind) return nativeBind.apply(func, slice.call(arguments, 1));
+    if (!_.isFunction(func)) throw new TypeError;
+    args = slice.call(arguments, 2);
+    return bound = function() {
+      if (!(this instanceof bound)) return func.apply(context, args.concat(slice.call(arguments)));
+      ctor.prototype = func.prototype;
+      var self = new ctor;
+      ctor.prototype = null;
+      var result = func.apply(self, args.concat(slice.call(arguments)));
+      if (Object(result) === result) return result;
+      return self;
+    };
+  };
+
   _.mixin(_);
-  
   
   //if (!_ && (typeof require !== 'undefined')) _ = require('underscore');
 
@@ -1403,12 +1426,12 @@ KISSY.add(function (S, Node,IO) {
         var match = key.match(delegateEventSplitter);
         var eventName = match[1], selector = match[2];
         method = _.bind(method, this);
-        //eventName += '.delegateEvents' + this.cid;
+        eventName += '.delegateEvents' + this.cid;
         if (selector === '') {
           this.$el.on(eventName, method);
         } else {
           //this.$el.on(eventName, selector, method);
-          this.$el.on(selector, eventName, method);
+          this.$el.delegate(eventName, selector, method);
         }
       }
       return this;
@@ -1418,7 +1441,7 @@ KISSY.add(function (S, Node,IO) {
     // You usually don't need to use this, but may wish to if you have multiple
     // Backbone views attached to the same DOM element.
     undelegateEvents: function() {
-      this.$el.detach('.delegateEvents' + this.cid);
+      this.$el.undelegate('.delegateEvents' + this.cid);
       return this;
     },
 
