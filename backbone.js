@@ -62,6 +62,13 @@ KISSY.add(function (S, Node,IO) {
   _.isFunction = S.isFunction;
   _.isArray = S.isArray;
   _.isString = S.isString;
+  _.isEmpty = S.isEmptyObject;
+  _.filter = S.filter;
+  _.indexOf = function(arr,value) {
+      return S.indexOf(value,arr);
+  }
+  _.map = _.collect = Array.prototype.map;
+  _.uniqueId = S.guid;
   // Extend a given object with all the properties in passed-in object(s).
   _.extend = function(obj) {
     each(slice.call(arguments, 1), function(source) {
@@ -127,11 +134,11 @@ KISSY.add(function (S, Node,IO) {
     return _.isFunction(value) ? value.call(object) : value;
   };
 
-  var idCounter = 0;
-  _.uniqueId = function(prefix) {
-    var id = ++idCounter + '';
-    return prefix ? prefix + id : id;
-  };
+  //var idCounter = 0;
+  //_.uniqueId = function(prefix) {
+  //  var id = ++idCounter + '';
+  //  return prefix ? prefix + id : id;
+  //};
 
   // Use a comparator function to figure out the smallest index at which
   // an object should be inserted so as to maintain order. Uses binary search.
@@ -159,17 +166,17 @@ KISSY.add(function (S, Node,IO) {
     return obj;
   };
 
-  // Return the results of applying the iterator to each element.
-  // Delegates to **ECMAScript 5**'s native `map` if available.
-  _.map = _.collect = function(obj, iterator, context) {
-    var results = [];
-    if (obj == null) return results;
-    if (Array.prototype.map && obj.map === Array.prototype.map) return obj.map(iterator, context);
-    each(obj, function(value, index, list) {
-      results.push(iterator.call(context, value, index, list));
-    });
-    return results;
-  };
+  //// Return the results of applying the iterator to each element.
+  //// Delegates to **ECMAScript 5**'s native `map` if available.
+  //_.map = _.collect = function(obj, iterator, context) {
+  //  var results = [];
+  //  if (obj == null) return results;
+  //  if (Array.prototype.map && obj.map === Array.prototype.map) return obj.map(iterator, context);
+  //  each(obj, function(value, index, list) {
+  //    results.push(iterator.call(context, value, index, list));
+  //  });
+  //  return results;
+  //};
 
   // Invoke a method (with arguments) on every item in a collection.
   _.invoke = function(obj, method) {
@@ -376,27 +383,32 @@ KISSY.add(function (S, Node,IO) {
 
 
   // Reusable constructor function for prototype setting.
-  var ctor = function(){};
-
-  // Create a function bound to a given object (assigning `this`, and arguments,
-  // optionally). Delegates to **ECMAScript 5**'s native `Function.bind` if
-  // available.
-  var nativeBind = Function.prototype.bind;
-  _.bind = function(func, context) {
-    var args, bound;
-    if (nativeBind && func.bind === nativeBind) return nativeBind.apply(func, slice.call(arguments, 1));
-    if (!_.isFunction(func)) throw new TypeError;
-    args = slice.call(arguments, 2);
-    return bound = function() {
-      if (!(this instanceof bound)) return func.apply(context, args.concat(slice.call(arguments)));
-      ctor.prototype = func.prototype;
-      var self = new ctor;
-      ctor.prototype = null;
-      var result = func.apply(self, args.concat(slice.call(arguments)));
-      if (Object(result) === result) return result;
-      return self;
-    };
-  };
+/*
+ *  var ctor = function(){};
+ *
+ *  // Create a function bound to a given object (assigning `this`, and arguments,
+ *  // optionally). Delegates to **ECMAScript 5**'s native `Function.bind` if
+ *  // available.
+ *  var nativeBind = Function.prototype.bind;
+ *  _.bind = function(func, context) {
+ *    var args, bound;
+ *    if (nativeBind && func.bind === nativeBind) return nativeBind.apply(func, slice.call(arguments, 1));
+ *    if (!_.isFunction(func)) throw new TypeError;
+ *    args = slice.call(arguments, 2);
+ *    return bound = function() {
+ *      if (!(this instanceof bound)) return func.apply(context, args.concat(slice.call(arguments)));
+ *      ctor.prototype = func.prototype;
+ *      var self = new ctor;
+ *      ctor.prototype = null;
+ *      var result = func.apply(self, args.concat(slice.call(arguments)));
+ *      if (Object(result) === result) return result;
+ *      return self;
+ *    };
+ *  };
+ */
+ _.bind = function(func, context){
+     return Function.prototype.bind.apply(func, slice.call(arguments, 1));
+ }
 
   _.mixin(_);
   
@@ -1303,12 +1315,15 @@ KISSY.add(function (S, Node,IO) {
   // Underscore methods that we want to implement on the Collection.
   // 90% of the core usefulness of Backbone Collections is actually implemented
   // right here:
-  var methods = ['forEach', 'each', 'map', 'collect', 'reduce', 'foldl',
-    'inject', 'reduceRight', 'foldr', 'find', 'detect', 'filter', 'select',
-    'reject', 'every', 'all', 'some', 'any', 'include', 'contains', 'invoke',
-    'max', 'min', 'toArray', 'size', 'first', 'head', 'take', 'initial', 'rest',
-    'tail', 'drop', 'last', 'without', 'indexOf', 'shuffle', 'lastIndexOf',
-    'isEmpty', 'chain'];
+  var methods = ['each','map', 'isEmpty' , 'indexOf', 'collect', 'filter'];
+  /*
+   *var methods = ['forEach', 'each', 'map', 'collect', 'reduce', 'foldl',
+   *  'inject', 'reduceRight', 'foldr', 'find', 'detect', 'filter', 'select',
+   *  'reject', 'every', 'all', 'some', 'any', 'include', 'contains', 'invoke',
+   *  'max', 'min', 'toArray', 'size', 'first', 'head', 'take', 'initial', 'rest',
+   *  'tail', 'drop', 'last', 'without', 'indexOf', 'shuffle', 'lastIndexOf',
+   *  'isEmpty', 'chain'];
+   */
 
   // Mix in each Underscore method as a proxy to `Collection#models`.
   S.each(methods, function(method) {

@@ -107,6 +107,7 @@
                 this.model.on("change", this.render, this)
                 this.collection || console.error("参数中没有Collection");
                 this.collection.on("reset", this.reset, this);
+                this.collection.on("sync", this.reset, this);
                 //this.addAll();
                 //this.$el.delegate("change", "select", this.selectChange,this);
                 //this.$el.delegate("click", ".prev",this.prev ,this);
@@ -221,7 +222,7 @@
         
         S.one(".content").append(similarApp.$el);
 
-        similarApp.param = { dataType : "jsonp" , s : 0 , data: {}, reset: true};
+        similarApp.param = { dataType : "jsonp" , s : 0 , data: {}};
         similarApp.index(1);
         
         

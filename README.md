@@ -13,7 +13,7 @@ backbone-lite
 	* once
     * sortIndex
     * invoke
-    * uniqueId
+    * uniqueId 用 guid
     * pick
     * result
     * defaults
@@ -24,6 +24,10 @@ backbone-lite
     * template
     * bind
     * mixin
+    * functions
+    * isEmpty 用 isEmptyObject
 
 * 重写Backbone.ajax 采用kissy的IO
 * 选择器的方法用one替换find。
+* 用kissy的event，替换view中的events的绑定方式
+* map和bind方法，直接用ECMAScript 5 原生的。
