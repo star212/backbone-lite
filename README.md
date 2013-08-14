@@ -30,4 +30,4 @@ backbone-lite
 * 重写Backbone.ajax 采用kissy的IO
 * 选择器的方法用one替换find。
 * 用kissy的event，替换view中的events的绑定方式
-* map和bind方法，直接用ECMAScript 5 原生的。
+* keys,map和bind方法，直接用ECMAScript 5 原生的。

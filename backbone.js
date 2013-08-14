@@ -121,6 +121,7 @@ KISSY.add(function (S, Node,IO) {
     return hasOwnProperty.call(obj, key);
   };
 
+  _.keys = Object.keys;
   //_.keys = Object.keys || function(obj) {
   //  if (obj !== Object(obj)) throw new TypeError('Invalid object');
   //  var keys = [];
