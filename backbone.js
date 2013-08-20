@@ -1580,8 +1580,25 @@ KISSY.add(function (S, Node,IO) {
 
   // Set the default implementation of `Backbone.ajax` to proxy through to `$`.
   // Override this if you'd like to use a different library.
+  // 兼容mtop
   Backbone.ajax = function() {
-    return IO.apply(Backbone.$, arguments);
+    var opts = arguments[0];
+    if(window.lib && window.lib.mtop && opts.api) {
+        window.$ = {};
+        //先准备好ajax
+        $.ajax = S.IO;
+
+        var xhr = lib.mtop.ajax({
+            api: opts.api,
+            v: opts.v,
+            data: opts.data || {}
+        },
+        opts.success,
+        opts.error)
+        return xhr;
+    }else{
+        return IO.apply(Backbone.$, arguments);
+    }
   };
 
   // Helpers
