@@ -1,5 +1,5 @@
 
-KISSY.use('mobile/backbone-lite/backbone.js', function (S, Backbone) {
+KISSY.use('mobile/backbone-lite/1.0/index.js', function (S, Backbone) {
 
   var sync = Backbone.sync;
   var ajax = Backbone.ajax;
