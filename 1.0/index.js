@@ -1584,7 +1584,7 @@ KISSY.add(function (S, Node,IO) {
   Backbone.ajax = function() {
     var opts = arguments[0];
     if(window.lib && window.lib.mtop && opts.api) {
-        window.$ = {};
+        window.$ || (window.$ = {});
         //先准备好ajax
         $.ajax = S.IO;
 

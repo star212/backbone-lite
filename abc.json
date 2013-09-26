@@ -1,0 +1,14 @@
+{
+    "name": "backbone-lite",
+    "version": "1.0",
+    "desc": "backbone的精简版，依赖切换成kissy",
+    "cover": "",
+    "tag":"MVC",
+    "author": {
+        "name": "quxing",
+        "email": "wb-quxing@taobao.com",
+        "page": "http://www.github.com/star212"
+    },
+    "type": "kissy-gallery",
+    "type-url": "http://gallery.kissyui.com/guide"
+}

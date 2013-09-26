@@ -10,8 +10,10 @@
 <meta content="false" name="twcClient" id="twcClient" />
 <!--<script src="http://a.tbcdn.cn/s/kissy/1.3.0/seed-min.js" data-config='{combine:true}'></script>-->
 <script src="http://a.tbcdn.cn/s/kissy/1.3.0/seed.js?ks-debug"></script>
+<link href="http://a.tbcdn.cn/mw/etao/touch/css/etao.130917.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
+<div class="content" id="compare_screen_two"></div>
         <script type="text/template" id="compare_comment_list_template">
             <ul></ul>
             <div class="pagination">
@@ -45,21 +47,21 @@
             packages:[
                 {
                     name:"mobile",
-                    path: "../../",
+                    path: "../../../",
                     charset:"utf-8",
                     ignorePackageNameInUri:true
                 }
             ]
         });
 
-    S.use('mobile/backbone-lite/backbone.js', function (S, Backbone) {
+    S.use('mobile/backbone-lite/1.0/index.js', function (S, Backbone) {
         console.log(Backbone);
         var _ = Backbone._,
             $ = Backbone.$;
         
         var a = Backbone.View.extend({
 
-            template: Backbone._.template("<div><%=author%></div>"),
+            template: Backbone._.template("<div><%=v%></div>"),
             initialize: function(opts) {
                 console.log("init");
                 this.model.on("change",this.render,this);
@@ -213,7 +215,7 @@
 
         var similarApp = new pagerView({
             tagName: "div",
-            id: "compare_similar_list",
+            id: "compare_similar",
             model: similarPagerModel,
             collection: new similarColletion,
             //hash: "compare/similar/",
@@ -229,7 +231,6 @@
     })
 </script>
 
-<div class="content"></div>
 </body>
 </html>
 
