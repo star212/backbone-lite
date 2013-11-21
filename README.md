@@ -5,7 +5,8 @@ backbone-lite
 
 
 ## changelog
-
+#### 2013.11.21
+* bind方法调kissy的bind
 #### 2013.08.20
 * 添加mtop的支持
 
@@ -26,7 +27,6 @@ backbone-lite
     * has
     * extend
     * template
-    * bind
     * mixin
     * functions
     * isEmpty 用 isEmptyObject
@@ -34,5 +34,5 @@ backbone-lite
 * 重写Backbone.ajax 采用kissy的IO
 * 选择器的方法用one替换find。
 * 用kissy的event，替换view中的events的绑定方式
-* keys,map和bind方法，直接用ECMAScript 5 原生的。
+* keys,map方法，直接用ECMAScript 5 原生的。
 
