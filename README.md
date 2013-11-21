@@ -7,6 +7,7 @@ backbone-lite
 ## changelog
 #### 2013.11.21
 * bind方法调kissy的bind
+
 #### 2013.08.20
 * 添加mtop的支持
 
