@@ -64,6 +64,8 @@ KISSY.add(function (S, Node,IO) {
   _.isString = S.isString;
   _.isEmpty = S.isEmptyObject;
   _.filter = S.filter;
+  _.escape =S.escapeHTML;
+  _.bind = S.bind;
   _.indexOf = function(arr,value) {
       return S.indexOf(value,arr);
   }
@@ -407,9 +409,10 @@ KISSY.add(function (S, Node,IO) {
  *    };
  *  };
  */
- _.bind = function(func, context){
-     return Function.prototype.bind.apply(func, slice.call(arguments, 1));
- }
+ //ios5 not support the nativeBind 
+ //_.bind = function(func, context){
+ //    return Function.prototype.bind.apply(func, slice.call(arguments, 1));
+ //}
 
   _.mixin(_);
   
