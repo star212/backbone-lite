@@ -37,3 +37,6 @@ backbone-lite
 * 用kissy的event，替换view中的events的绑定方式
 * keys,map方法，直接用ECMAScript 5 原生的。
 
+##### 感谢
+* 向 <http://backbonejs.org/> 致敬
+
